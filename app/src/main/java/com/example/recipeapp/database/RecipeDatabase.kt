@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.recipeapp.dao.RecipeDao
+import com.example.recipeapp.entities.Category
 import com.example.recipeapp.entities.CategoryItems
 import com.example.recipeapp.entities.Meal
 import com.example.recipeapp.entities.MealsItems

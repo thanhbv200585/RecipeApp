@@ -2,22 +2,21 @@ package com.example.recipeapp.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.recipeapp.R
+import com.example.recipeapp.databinding.ItemRvMainCategoryBinding
 import com.example.recipeapp.entities.MealsItems
-import kotlinx.android.synthetic.main.item_rv_main_category.view.*
 
 class SubCategoryAdapter: RecyclerView.Adapter<SubCategoryAdapter.RecipeViewHolder>() {
 
     var listener: SubCategoryAdapter.OnItemClickListener? = null
     var ctx :Context? = null
     var arrSubCategory = ArrayList<MealsItems>()
-    class RecipeViewHolder(view: View): RecyclerView.ViewHolder(view){
-
+    class RecipeViewHolder(private val binding: ItemRvMainCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun getBinding(): ItemRvMainCategoryBinding = binding
     }
+
 
     fun setData(arrData : List<MealsItems>){
         arrSubCategory = arrData as ArrayList<MealsItems>
@@ -25,7 +24,8 @@ class SubCategoryAdapter: RecyclerView.Adapter<SubCategoryAdapter.RecipeViewHold
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         ctx = parent.context
-        return RecipeViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_rv_sub_category,parent,false))
+        val binding = ItemRvMainCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return RecipeViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -38,9 +38,9 @@ class SubCategoryAdapter: RecyclerView.Adapter<SubCategoryAdapter.RecipeViewHold
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
 
-        holder.itemView.tv_dish_name.text = arrSubCategory[position].strMeal
+        holder.getBinding().tvDishName.text = arrSubCategory[position].strMeal
 
-        Glide.with(ctx!!).load(arrSubCategory[position].strMealThumb).into(holder.itemView.img_dish)
+        Glide.with(ctx!!).load(arrSubCategory[position].strMealThumb).into(holder.getBinding().imgDish)
 
         holder.itemView.rootView.setOnClickListener {
             listener!!.onClicked(arrSubCategory[position].idMeal)

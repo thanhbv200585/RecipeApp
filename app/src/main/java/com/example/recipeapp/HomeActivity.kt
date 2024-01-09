@@ -6,14 +6,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipeapp.adapter.MainCategoryAdapter
 import com.example.recipeapp.adapter.SubCategoryAdapter
 import com.example.recipeapp.database.RecipeDatabase
+import com.example.recipeapp.databinding.ActivityHomeBinding
 import com.example.recipeapp.entities.CategoryItems
 import com.example.recipeapp.entities.MealsItems
-import kotlinx.android.synthetic.main.activity_home.rv_main_category
-import kotlinx.android.synthetic.main.activity_home.rv_sub_category
-import kotlinx.android.synthetic.main.activity_home.tvCategory
 import kotlinx.coroutines.launch
 
-class HomeActivity : BaseActivity() {
+class   HomeActivity : BaseActivity() {
+    private lateinit var binding: ActivityHomeBinding
+
     var arrMainCategory = ArrayList<CategoryItems>()
     var arrSubCategory = ArrayList<MealsItems>()
 
@@ -22,7 +22,8 @@ class HomeActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         getDataFromDb()
 
@@ -53,8 +54,8 @@ class HomeActivity : BaseActivity() {
 
                 getMealDataFromDb(arrMainCategory[0].strcategory)
                 mainCategoryAdapter.setData(arrMainCategory)
-                rv_main_category.layoutManager = LinearLayoutManager(this@HomeActivity,LinearLayoutManager.HORIZONTAL,false)
-                rv_main_category.adapter = mainCategoryAdapter
+                binding.rvMainCategory.layoutManager = LinearLayoutManager(this@HomeActivity,LinearLayoutManager.HORIZONTAL,false)
+                binding.rvMainCategory.adapter = mainCategoryAdapter
             }
 
 
@@ -62,14 +63,14 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun getMealDataFromDb(categoryName:String){
-        tvCategory.text = "$categoryName Category"
+        binding.tvCategory.text = "$categoryName Category"
         launch {
             this.let {
                 var cat = RecipeDatabase.getDatabase(this@HomeActivity).recipeDao().getSpecificMealList(categoryName)
                 arrSubCategory = cat as ArrayList<MealsItems>
                 subCategoryAdapter.setData(arrSubCategory)
-                rv_sub_category.layoutManager = LinearLayoutManager(this@HomeActivity,LinearLayoutManager.HORIZONTAL,false)
-                rv_sub_category.adapter = subCategoryAdapter
+                binding.rvSubCategory.layoutManager = LinearLayoutManager(this@HomeActivity,LinearLayoutManager.HORIZONTAL,false)
+                binding.rvSubCategory.adapter = subCategoryAdapter
             }
         }
     }

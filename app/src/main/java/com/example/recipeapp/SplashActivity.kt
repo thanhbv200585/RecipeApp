@@ -5,26 +5,34 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.recipeapp.database.RecipeDatabase
+import com.example.recipeapp.databinding.ActivitySplashBinding
 import com.example.recipeapp.entities.Category
 import com.example.recipeapp.entities.Meal
 import com.example.recipeapp.entities.MealsItems
 import com.example.recipeapp.interfaces.GetDataService
 import com.example.recipeapp.retrofitclient.RetrofitClientInstance
-import kotlinx.android.synthetic.main.activity_splash.btnGetStarted
-import kotlinx.android.synthetic.main.activity_splash.loader
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SplashActivity : AppCompatActivity() {
+
+class SplashActivity : BaseActivity(), EasyPermissions.RationaleCallbacks, EasyPermissions.PermissionCallbacks {
+    private lateinit var binding: ActivitySplashBinding
+    private var READ_STORAGE_PERM = 123
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        Log.d("Trigger", "onClicked")
 
-        btnGetStarted.setOnClickListener {
+        binding.btnGetStarted.setOnClickListener {
+            Log.d("Trigger", "onClicked")
             val intent = Intent(this@SplashActivity, HomeActivity::class.java)
             startActivity(intent)
             finish()
@@ -62,7 +70,7 @@ class SplashActivity : AppCompatActivity() {
         call.enqueue(object : Callback<Meal> {
             override fun onFailure(call: Call<Meal>, t: Throwable) {
 
-                loader.visibility = View.INVISIBLE
+                binding.loader.visibility = View.INVISIBLE
                 Toast.makeText(this@SplashActivity, "Something went wrong", Toast.LENGTH_SHORT)
                     .show()
             }
@@ -79,23 +87,19 @@ class SplashActivity : AppCompatActivity() {
     }
 
     fun insertDataIntoRoomDb(category: Category?) {
-
-        launch {
+        CoroutineScope(coroutineContext).launch {
             this.let {
-
                 for (arr in category!!.categorieitems!!) {
                     RecipeDatabase.getDatabase(this@SplashActivity)
                         .recipeDao().insertCategory(arr)
                 }
             }
         }
-
-
     }
 
     fun insertMealDataIntoRoomDb(categoryName: String, meal: Meal?) {
 
-        launch {
+        CoroutineScope(coroutineContext).launch {
             this.let {
 
 
@@ -112,7 +116,7 @@ class SplashActivity : AppCompatActivity() {
                     Log.d("mealData", arr.toString())
                 }
 
-                btnGetStarted.visibility = View.VISIBLE
+                binding.btnGetStarted.visibility = View.VISIBLE
             }
         }
 
@@ -120,7 +124,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     fun clearDataBase() {
-        launch {
+        CoroutineScope(coroutineContext).launch {
             this.let {
                 RecipeDatabase.getDatabase(this@SplashActivity).recipeDao().clearDb()
             }
